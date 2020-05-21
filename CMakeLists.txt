@@ -16,7 +16,11 @@ endif()
 # set SOURCE_FILES to all of the c files
 FILE(GLOB SOURCE_FILES src/Circle.cpp
   src/Source.cpp
+  deps/imgui/*.cpp
 )
+
+
+add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GL3W=1)
 
 
 # definition of the covid19contactmodeling, and its dependent sources
