@@ -12,6 +12,7 @@
 //Gives random number generation
 #include<cstdlib>
 #include <time.h>
+#include <math.h>
 
 //Circle class
 #include "Circle.h"
