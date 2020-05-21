@@ -1,6 +1,6 @@
 //Graphics libraries
 #define GL3W_IMPLEMENTATION 1
-#include "gl3w.h"
+#include "GL/gl3w.h"
 #include <GLFW/glfw3.h>
 
 //Allows output messages
