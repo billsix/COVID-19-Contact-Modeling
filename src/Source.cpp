@@ -1,5 +1,6 @@
 //Graphics libraries
-#include <glad/glad.h>
+#define GL3W_IMPLEMENTATION 1
+#include "gl3w.h"
 #include <GLFW/glfw3.h>
 
 //Allows output messages
@@ -86,7 +87,7 @@ int main()
 
 	//Creates a pointer to a window object with GLFW
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Contact Modeling", NULL, NULL);
-	
+
 	//Recognizes if the window didn't generate properly. If it didn't, we clean up GLFW and return an error.
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -97,17 +98,22 @@ int main()
 	//Makes the window the current place to draw stuff. This tells OpenGL where the image data that it is about to render should go.
 	glfwMakeContextCurrent(window);
 
-	//Checks to make sure that GLAD has appropriately loaded before we try to do anything with OpenGL calls.
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
+
+        if (gl3w_init()) {
+          return -1;
+        }
+        printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION),
+               glGetString(GL_SHADING_LANGUAGE_VERSION));
+        if (!gl3w_is_supported(3, 3)) {
+          fprintf(stderr, "OpenGL 3.3 not supported\n");
+          return -1;
+        }
+
 
 	//Sets the viewport for OpenGL. For circles to be drawn properly, it needs to be square
 	drawInSquareViewport(window);
 
-	//References our program to link OpenGL with the instructions on what to do in the event of a window resize 
+	//References our program to link OpenGL with the instructions on what to do in the event of a window resize
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	//Compile and build the vertex shader program
@@ -160,7 +166,7 @@ int main()
 
 	//Generate array of circles
 	vector<Circle> circles = generateCircles();
-	
+
 	//Saves the time for framerate comparisons
 	double time_at_beginning_of_previous_frame = glfwGetTime();
 
@@ -406,7 +412,7 @@ vector<Circle> circleCollision(vector<Circle> circles)
 
 			//The amount of overlap between the two circles
 			overlap = (circles[circle].getRadius() + circles[other_circle].getRadius())-magnitude;
-				
+
 			//Rounding error is in the 1e-17 spot, so this avoids weird rounding errors that might not shift the circles quite all of the way out of each other
 			if (overlap>1e-16) {
 				//Poll the velocity of the other circle
@@ -456,7 +462,7 @@ vector<Circle> circleCollision(vector<Circle> circles)
 					}
 				}
 			}
-			
+
 		}
 
 
@@ -496,7 +502,7 @@ void drawCircles(vector<Circle> circles, int shaderProgram) {
 	//Generate the model matrix for movement around the screen (i.e. the coordinates of where my object origin should reside)
 	//Initialize to the identity matrix to be modified by later object calls
 	float model_matrix[4][4];
-	
+
 	for (int circle = 0;circle < circles.size();circle++) {
 		//Reset model matrix to the identity matrix
 		for (int i = 0;i < 4;i++) {
