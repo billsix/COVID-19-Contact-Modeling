@@ -248,51 +248,73 @@ int main()
 
 
 
+        bool simulationRunning = false;
+        bool settingUpSim = true;
 	//Event loop. This contains what the program should do every frame.
 	while (!glfwWindowShouldClose(window))
 	{
-		//Checks to see if enough time has passed to bother rendering another frame
-		if (glfwGetTime() < time_at_beginning_of_previous_frame + 1.0 / FRAMERATE)
+          if(simulationRunning)
+            {
+              //Checks to see if enough time has passed to bother rendering another frame
+              if (glfwGetTime() < time_at_beginning_of_previous_frame + 1.0 / FRAMERATE)
 		{
-			continue;
+                  continue;
 		}
-		//Saves the current time to reference on the next iterations of the loop
-		time_at_beginning_of_previous_frame = glfwGetTime();
+              //Saves the current time to reference on the next iterations of the loop
+              time_at_beginning_of_previous_frame = glfwGetTime();
 
-		//Processes any input that has happened since the last frame
-		processInput(window);
+              //Processes any input that has happened since the last frame
+              processInput(window);
 
-		//Processes the movement of the circle
-		circles=circleMotion(circles);
+              //Processes the movement of the circle
+              circles=circleMotion(circles);
 
-		//Clears and resizes the window appropriately
-		drawInSquareViewport(window);
+            }
+          //Clears and resizes the window appropriately
+          drawInSquareViewport(window);
+          if(!settingUpSim)
+            {
 
-		//Tells OpenGL to use the shaders that we custom made
-		glUseProgram(shaderProgram);
+              //Tells OpenGL to use the shaders that we custom made
+              glUseProgram(shaderProgram);
 
-		drawCircles(circles,shaderProgram);
+              drawCircles(circles,shaderProgram);
+            }
 
-                //imgui
+          //imgui
+          {
+
+            // Start the Dear ImGui frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            // uncomment the below line to see the demos,
+            // from which you can copy and paste code,
+            // and adapt them to your needs
+            //imgui_demo_code();
+
+            ImGui::Begin("Simulation Control!");
+            {
+              if (ImGui::Button(simulationRunning ? "Pause" : "Start"))
                 {
-
-                  // Start the Dear ImGui frame
-                  ImGui_ImplOpenGL3_NewFrame();
-                  ImGui_ImplGlfw_NewFrame();
-                  ImGui::NewFrame();
-
-                  imgui_demo_code();
-
-                  // Rendering
-                  ImGui::Render();
-                  ImGuiIO& io = ImGui::GetIO();
-                  glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
-                  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+                  simulationRunning = !simulationRunning;
+                  if(settingUpSim)
+                    settingUpSim = false;
                 }
+              ImGui::End();
+            }
 
-		//Finished with rendering, display the image on the screen.
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+            // Rendering
+            ImGui::Render();
+            ImGuiIO& io = ImGui::GetIO();
+            glViewport(0, 0, (GLsizei)io.DisplaySize.x, (GLsizei)io.DisplaySize.y);
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+          }
+
+          //Finished with rendering, display the image on the screen.
+          glfwSwapBuffers(window);
+          glfwPollEvents();
 	}
 
         // Cleanup
