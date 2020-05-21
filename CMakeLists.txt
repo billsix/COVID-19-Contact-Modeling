@@ -45,7 +45,7 @@ if(WIN32)
     include_directories(deps/glfw/include)
 endif(WIN32)
 
-include_directories(deps/gl3w)
+include_directories(deps/gl3w deps/imgui)
 
 # link against the fetched libraries
 if(WIN32)
