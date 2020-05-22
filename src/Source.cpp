@@ -139,6 +139,8 @@ int main()
 
 	//Use the core profile of OpenGL
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// for macos
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 	//Creates a pointer to a window object with GLFW
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Contact Modeling", NULL, NULL);
